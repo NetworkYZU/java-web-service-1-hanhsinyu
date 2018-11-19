@@ -5,12 +5,17 @@
  */
 package lendle.courses.network.loginws;
 
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -25,35 +30,48 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "LoginsServlet", urlPatterns = {"/logins"})
 public class LoginsServlet extends HttpServlet {
-    static{
+
+    static {
         try {
             Class.forName("org.apache.derby.jdbc.ClientDriver");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(LoginsServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
-    private void service1(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        response.setContentType("text/plain;charset=UTF-8");
-        try (PrintWriter out=response.getWriter(); Connection conn=DriverManager.getConnection("jdbc:derby://localhost:1527/sample", "app", "app")) {
+
+    private void service1(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json;charset=UTF-8");
+        try (PrintWriter out = response.getWriter(); Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/sample", "app", "app")) {
             //select from login
             //output in id:password style
-            
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("select * from login");
+            List list = new Vector();
+            while (rs.next()) {
+                String id = rs.getString("ID");
+                String pass = rs.getString("PASSWORD");
+                Map map = new HashMap();
+                map.put("id", id);
+                map.put("password", pass);
+                list.add(map);
+            }
+            Gson gson = new Gson();
+            String json = gson.toJson(list);
+            out.print(json);
             //////////////////////////////
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new ServletException(e);
         }
     }
-    
-    private void service2(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+
+    private void service2(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-        try (PrintWriter out=response.getWriter(); Connection conn=DriverManager.getConnection("jdbc:derby://localhost:1527/sample", "app", "app")) {
+        try (PrintWriter out = response.getWriter(); Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/sample", "app", "app")) {
             //re-implement service1, this time
             //responde in json format
-            
+
             //////////////////////////////
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new ServletException(e);
         }
     }
