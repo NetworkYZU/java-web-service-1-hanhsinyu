@@ -97,8 +97,13 @@ public class LoginInfoServlet extends HttpServlet {
             //update the corresponding user
             String id=request.getParameter("id");
             String password=request.getParameter("password");
+            PreparedStatement stmt=conn.prepareStatement("update LOGIN set PASSWORD=? where ID=?");
+            stmt.setString(1, password);
+            stmt.setString(2, id);
+            getServletContext().log("id="+id+", pass="+password);
+            int ret=stmt.executeUpdate();
             //////////////////////////////
-            out.println("success");
+            out.println(ret);
         }catch(Exception e){
             throw new ServletException(e);
         }
@@ -110,8 +115,11 @@ public class LoginInfoServlet extends HttpServlet {
         try (PrintWriter out=response.getWriter(); Connection conn=DriverManager.getConnection("jdbc:derby://localhost:1527/sample", "app", "app")) {
             //delete the corresponding user
             String id=request.getParameter("id");
+            PreparedStatement stmt=conn.prepareStatement("delete from login where ID=?");
+            stmt.setString(1, id);
+            int ret=stmt.executeUpdate();
             //////////////////////////////
-            out.println("success");
+            out.println(ret);
         }catch(Exception e){
             throw new ServletException(e);
         }
@@ -119,7 +127,7 @@ public class LoginInfoServlet extends HttpServlet {
     
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/plain;charset=UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
         try (PrintWriter out=response.getWriter(); Connection conn=DriverManager.getConnection("jdbc:derby://localhost:1527/sample", "app", "app")) {
             //insert the corresponding user
             String id=request.getParameter("id");
