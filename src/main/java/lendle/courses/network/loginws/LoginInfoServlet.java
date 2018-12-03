@@ -145,3 +145,8 @@ public class LoginInfoServlet extends HttpServlet {
     }
 
 }
+//ID:<input type="text" id="qid"/>
+  //      <input type="button" value="Query" onclick="query();"/><br/>
+    //    <div id="dlg">
+      //  id:<input type="text" v-model="login.id"/><br/>
+        //password:<input type="text" v-model="login.password">
